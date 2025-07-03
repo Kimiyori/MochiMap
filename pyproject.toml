@@ -1,0 +1,31 @@
+[project]
+name = "mochimap"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "alembic>=1.16.2",
+    "asyncpg>=0.30.0",
+    "authlib>=1.6.0",
+    "dependency-injector>=4.48.1",
+    "fastapi[standard]>=0.115.13",
+    "itsdangerous>=2.2.0",
+    "pydantic>=2.11.7",
+    "pydantic-settings>=2.10.1",
+    "python-keycloak>=5.6.0",
+    "python-multipart>=0.0.20",
+    "sqlalchemy>=2.0.41",
+    "uvicorn>=0.34.3",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.12.1",
+    "taskipy>=1.14.1",
+]
+
+[tool.taskipy.tasks]
+start = "python src/main.py"
+check = "uv run ruff check"
+"check:fix" = "uv run ruff check --fix"

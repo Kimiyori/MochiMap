@@ -1,0 +1,43 @@
+line-length = 120
+
+[lint]
+extend-select = [
+    # FastAPI specific rules
+    "FAST",
+    
+    # Async/await best practices  
+    "ASYNC",
+    
+    # Security issues
+    "S",
+    
+    # Bandit security linting
+    "B",
+    
+    # Complexity checking
+    "C90",
+    
+    # Import sorting and organization
+    "I",
+    
+    # Performance anti-patterns
+    "PERF",
+    
+    # Error handling
+    "TRY",
+    
+    # API design patterns
+    "ARG",  # Unused arguments
+    "RET",  # Return values
+    "SIM",  # Code simplification
+    
+    # Code quality
+    "UP",   # pyupgrade
+    "N",    # pep8-naming
+    "ERA",  # eradicate (commented code)
+    "PTH",  # pathlib usage
+    "RUF",  # Ruff-specific rules
+]
+
+[lint.mccabe]
+max-complexity = 10
