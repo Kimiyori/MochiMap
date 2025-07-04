@@ -5,6 +5,7 @@ from core.config import DB_SETTINGS
 from infrastructure.adapters.keycloak import KeycloakClient
 from infrastructure.persistence.connection.connection import AsyncDatabase
 from infrastructure.persistence.transaction.unit_of_work import SqlAlchemyUnitOfWork
+from modules.roadmap.infrastructure.uow import RoadmapUnitOfWork
 
 
 class InfrastructureContainer(containers.DeclarativeContainer):
@@ -17,5 +18,9 @@ class InfrastructureContainer(containers.DeclarativeContainer):
     # Unit of Work
     uow = providers.Factory(
         SqlAlchemyUnitOfWork,
+        engine=db.provided.engine,
+    )
+    roadmap_uow = providers.Factory(
+        RoadmapUnitOfWork,
         engine=db.provided.engine,
     )

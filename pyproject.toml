@@ -29,3 +29,5 @@ dev = [
 start = "python src/main.py"
 check = "uv run ruff check"
 "check:fix" = "uv run ruff check --fix"
+"migration:revision" = "alembic revision --autogenerate"
+"migration:update" = "alembic upgrade head"

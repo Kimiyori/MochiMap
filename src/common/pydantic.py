@@ -1,3 +1,6 @@
+from pydantic import BaseModel
+
+
 class StrRequiredError(TypeError):
     def __init__(self):
         super().__init__('str required')
@@ -24,3 +27,6 @@ class ConStr(str):
             raise StrLengthError(cls.min_length, cls.max_length)
 
         return value
+
+class BaseRequestCommand(BaseModel):
+    pass

@@ -1,5 +1,4 @@
-from abc import ABC
-from typing import Generic, TypeVar, final
+from typing import TypeVar, final
 
 from sqlalchemy import delete, exists, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,7 +9,7 @@ ModelT = TypeVar("ModelT", bound=Base)
 SessionT = TypeVar("SessionT", bound=AsyncSession)
 
 
-class AbstractRepository(ABC, Generic[SessionT]):
+class AbstractRepository[SessionT: AsyncSession]:
     """Abstract Repository wiith base for concrete implementation.
 
     Args:
@@ -23,7 +22,7 @@ class AbstractRepository(ABC, Generic[SessionT]):
         self.session = session
 
 
-class SqlAlchemyRepository(AbstractRepository[AsyncSession], Generic[ModelT]):
+class SqlAlchemyRepository[ModelT: Base](AbstractRepository[AsyncSession]):
     """SqlAlchemy Repository.
 
     Args:

@@ -1,5 +1,5 @@
-import modules.auth.infrastructure.persistence.mapper as user_mapper
+import modules.roadmap.infrastructure.mapper as roadmap_mapper
 
 
 def start_mapper():
-    user_mapper.start_mapper()
+    roadmap_mapper.start_mapper()

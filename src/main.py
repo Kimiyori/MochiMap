@@ -8,7 +8,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from core.routes import add_routes
 from dependencies.container import Container
 from infrastructure.persistence.mapper import start_mapper
-from modules.auth.use_cases import auth_router
+from modules.roadmap.use_cases import roadmap_router
 
 
 @asynccontextmanager
@@ -30,6 +30,7 @@ def create_app() -> FastAPI:
         version="0.0.1",
         root_path="/api",
         redirect_slashes=False,
+        lifespan=lifespan,
     )
     app.container = container
     app.add_middleware(
@@ -41,7 +42,7 @@ def create_app() -> FastAPI:
     )
     app.add_middleware(SessionMiddleware, secret_key="some-random-string")
 
-    add_routes([auth_router], app)
+    add_routes([ roadmap_router], app)
     return app
 
 
@@ -49,6 +50,4 @@ if __name__ == "__main__":
     import uvicorn
 
     app = create_app()
-    uvicorn.run(
-        "main:create_app", host="127.0.0.1", port=8000, reload=True, factory=True
-    )
+    uvicorn.run("main:create_app", host="127.0.0.1", port=8000, reload=True, factory=True)
