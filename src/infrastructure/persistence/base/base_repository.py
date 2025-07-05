@@ -3,7 +3,7 @@ from typing import TypeVar, final
 from sqlalchemy import delete, exists, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from infrastructure.persistence.base.base_entities import Base
+from src.infrastructure.persistence.base.base_entities import Base
 
 ModelT = TypeVar("ModelT", bound=Base)
 SessionT = TypeVar("SessionT", bound=AsyncSession)

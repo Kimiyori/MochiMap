@@ -1,11 +1,11 @@
 from dependency_injector import containers, providers
 from dependency_injector.providers import Singleton
 
-from core.config import DB_SETTINGS
-from infrastructure.adapters.keycloak import KeycloakClient
-from infrastructure.persistence.connection.connection import AsyncDatabase
-from infrastructure.persistence.transaction.unit_of_work import SqlAlchemyUnitOfWork
-from modules.roadmap.infrastructure.uow import RoadmapUnitOfWork
+from src.core.config import DB_SETTINGS
+from src.infrastructure.adapters.keycloak import KeycloakClient
+from src.infrastructure.persistence.connection.connection import AsyncDatabase
+from src.infrastructure.persistence.transaction.unit_of_work import SqlAlchemyUnitOfWork
+from src.modules.roadmap.infrastructure.uow import RoadmapUnitOfWork
 
 
 class InfrastructureContainer(containers.DeclarativeContainer):

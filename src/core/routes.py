@@ -1,4 +1,3 @@
-import glob
 import os
 from pathlib import Path
 
@@ -12,8 +11,8 @@ def add_routes(routes, app: FastAPI):
 
 
 def discover_api_modules(base_path: Path):
-    package_root = base_path
-    api_paths = glob.glob(f"{base_path}/modules/**/api.py", recursive=True)
+    package_root = base_path.parent  # Go up one level to include 'src' in the path
+    api_paths = base_path.rglob("modules/**/api.py")
 
     modules = []
     for path in api_paths:

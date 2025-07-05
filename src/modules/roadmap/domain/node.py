@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from modules.roadmap.domain.value_objects import Difficulty, EstimatedTime, NodeType, Position, Resource, TimeUnit
+from src.modules.roadmap.domain.value_objects import Difficulty, EstimatedTime, NodeType, Position, Resource, TimeUnit
 
 
 @dataclass

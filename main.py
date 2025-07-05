@@ -5,21 +5,22 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import clear_mappers
 from starlette.middleware.sessions import SessionMiddleware
 
-from core.routes import add_routes
-from dependencies.container import Container
-from infrastructure.persistence.mapper import start_mapper
-from modules.roadmap.use_cases import roadmap_router
+from src.core.routes import add_routes
+from src.dependencies.container import Container
+from src.infrastructure.persistence.mapper import start_mapper
+from src.modules.roadmap.use_cases import roadmap_router
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     db = app.container.infrastructure.db()
+    await db.connect()
     start_mapper()
 
     yield
 
     clear_mappers()
-    db.disconnect()
+    await db.disconnect()
 
 
 def create_app() -> FastAPI:
@@ -42,7 +43,7 @@ def create_app() -> FastAPI:
     )
     app.add_middleware(SessionMiddleware, secret_key="some-random-string")
 
-    add_routes([ roadmap_router], app)
+    add_routes([roadmap_router], app)
     return app
 
 

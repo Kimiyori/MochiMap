@@ -1,6 +1,6 @@
-from core.config.application import ApplicationSettings
-from core.config.auth import AuthSettings
-from core.config.db import DatabaseSettings
+from src.core.config.application import ApplicationSettings
+from src.core.config.auth import AuthSettings
+from src.core.config.db import DatabaseSettings
 
 APP_SETTINGS = ApplicationSettings()
 AUTH_SETTINGS = AuthSettings()
