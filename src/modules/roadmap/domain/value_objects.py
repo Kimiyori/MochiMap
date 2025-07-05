@@ -26,13 +26,7 @@ class Difficulty:
     def __str__(self) -> str:
         return self.level.value
 
-    def __composite_values__(self):
-        return (self.level,)
-    
-    @classmethod
-    def from_composite(cls, level):
-        return cls(level=level)
-    
+
 @dataclass(frozen=True)
 class Position:
     x: float
@@ -51,13 +45,7 @@ class EstimatedTime:
     
     def __str__(self) -> str:
         return f"{self.value} {self.unit.value}"
-        
-    def __composite_values__(self):
-        return (self.value, self.unit)
-    
-    @classmethod
-    def from_composite(cls, value, unit):
-        return cls(value=value, unit=unit)
+
     
 class ResourceType(Enum):
     ARTICLE = "article"

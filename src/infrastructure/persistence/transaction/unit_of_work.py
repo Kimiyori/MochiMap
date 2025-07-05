@@ -1,16 +1,16 @@
 from __future__ import annotations
 
 import abc
-from contextlib import AbstractAsyncContextManager
-from typing import TYPE_CHECKING, Self, TypeVar, final
+from typing import TYPE_CHECKING, TypeVar, final
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 
-from infrastructure.persistence.transaction.transaction import get_current_session
+from src.infrastructure.persistence.base.base_repository import SqlAlchemyRepository
+from src.infrastructure.persistence.transaction.transaction import get_current_session, set_current_session
 
 if TYPE_CHECKING:
-    from types import TracebackType
+    pass
 
 
 EngineT = TypeVar("EngineT")
@@ -22,25 +22,12 @@ class UnitOfWorkError(Exception):
     pass
 
 
-class AbstractUnitOfWork[EngineT](AbstractAsyncContextManager[Self], abc.ABC):
+class AbstractUnitOfWork[EngineT]( abc.ABC):
     """Abstract class for Unit of Work"""
 
     def __init__(self, engine: EngineT) -> None:
         self.engine = engine
-        self.reuse_session: bool = False
 
-    @abc.abstractmethod
-    async def __aenter__(self) -> Self:
-        return self
-
-    @abc.abstractmethod
-    async def __aexit__(
-        self,
-        exc_type: type[BaseException] | None,
-        exc_val: BaseException | None,
-        exc_tb: TracebackType | None,
-    ) -> None:
-        return None
 
     @abc.abstractmethod
     async def commit(self) -> None:
@@ -65,36 +52,14 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork[AsyncEngine]):
     def __init__(self, engine: AsyncEngine) -> None:
         super().__init__(engine)
         self.session: AsyncSession | None = None
-        self._owns_session = False
-
-    def __call__(self, *, reuse_session: bool = False):
-        self.reuse_session = reuse_session
-        return self
-
-    async def __aenter__(self):
+        self.repository: SqlAlchemyRepository|None= None
         context_session = get_current_session()
 
         if context_session is not None:
             self.session = context_session
-            self._owns_session = False
         else:
             self.session = AsyncSession(self.engine)
-            self._owns_session = True
-
-        return self
-
-    async def __aexit__(
-        self,
-        exc_type: type[BaseException] | None,
-        exc_val: BaseException | None,
-        exc_tb: TracebackType | None,
-    ) -> None:
-        if exc_type is not None:
-            await self.rollback()
-
-        # Only close if we own the session
-        if self._owns_session:
-            await self.close()
+            set_current_session(self.session)
 
     @final
     async def commit(self) -> None:

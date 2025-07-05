@@ -1,4 +1,4 @@
-from core.config.base import BaseSettings
+from src.core.config.base import BaseSettings
 
 
 class AuthSettings(BaseSettings):

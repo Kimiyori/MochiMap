@@ -1,8 +1,3 @@
-import sys
-from pathlib import Path
-
-sys.path.append(str(Path(__file__).parent.parent / "src"))
-
 import asyncio
 from logging.config import fileConfig
 
@@ -11,9 +6,9 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
-from core.config import DB_SETTINGS
-from infrastructure.persistence.base.base_entities import Base
-from infrastructure.persistence.models import *
+from src.core.config import DB_SETTINGS
+from src.infrastructure.persistence.base.base_entities import Base
+from src.infrastructure.persistence.models import *  # noqa: F403
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -34,6 +29,7 @@ target_metadata = Base.metadata
 
 POSTGRES_URL = DB_SETTINGS.database_uri
 config.set_main_option("sqlalchemy.url", POSTGRES_URL)
+
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.

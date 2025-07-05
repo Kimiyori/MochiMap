@@ -4,12 +4,12 @@ from typing import TYPE_CHECKING
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from infrastructure.persistence.base.base_entities import Base, UUIDMixin
-from modules.roadmap.domain.value_objects import ConnectionType
+from src.infrastructure.persistence.base.base_entities import Base, UUIDMixin
+from src.modules.roadmap.domain.value_objects import ConnectionType
 
 if TYPE_CHECKING:
-    from modules.roadmap.domain.node import NodeModel
-    from modules.roadmap.domain.roadmap import RoadmapModel
+    from src.infrastructure.persistence.models.node import NodeModel
+    from src.infrastructure.persistence.models.roadmap.roadmap import RoadmapModel
 
 
 class ConnectionModel(Base, UUIDMixin):

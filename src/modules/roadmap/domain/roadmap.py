@@ -1,9 +1,8 @@
-from dataclasses import dataclass, field
-from uuid import UUID
-from xml.dom import Node
+from dataclasses import dataclass
+from uuid import UUID, uuid4
 
-from modules.roadmap.domain.value_objects import Connection, Difficulty, EstimatedTime, TimeUnit
-from modules.roadmap.use_cases.create_roadmap.command import CreateRoadmapCommand
+from src.modules.roadmap.domain.value_objects import Difficulty, EstimatedTime
+from src.modules.roadmap.use_cases.create_roadmap.command import CreateRoadmapCommand
 
 
 @dataclass
@@ -14,18 +13,17 @@ class Roadmap:
     owner_id: UUID
     difficulty: Difficulty
     estimated_time: EstimatedTime
-    estimated_time_unit: TimeUnit
-    nodes: list[Node] =  field(default_factory=list)
-    connections: list[Connection] = field(default_factory=list)
+    # nodes: list[Node] =  field(default_factory=list)
+    # connections: list[Connection] = field(default_factory=list)
 
     @staticmethod
     def new_roadmap(command: CreateRoadmapCommand) -> "Roadmap":
+        id = uuid4()
         return Roadmap(
-            id=command.id,
+            id=id,
             title=command.title,
             description=command.description,
             owner_id=command.owner_id,
             difficulty=command.difficulty,
             estimated_time=command.estimated_time,
-            estimated_time_unit=command.estimated_time_unit,
         )

@@ -1,9 +1,9 @@
 from sqlalchemy.orm import composite
 
-from infrastructure.persistence.base.base_entities import mapper_registry
-from infrastructure.persistence.models.roadmap.roadmap import RoadmapModel
-from modules.roadmap.domain.roadmap import Roadmap
-from modules.roadmap.domain.value_objects import Difficulty, EstimatedTime
+from src.infrastructure.persistence.base.base_entities import mapper_registry
+from src.infrastructure.persistence.models.roadmap.roadmap import RoadmapModel
+from src.modules.roadmap.domain.roadmap import Roadmap
+from src.modules.roadmap.domain.value_objects import Difficulty, EstimatedTime
 
 
 def start_mapper():
@@ -21,8 +21,7 @@ def start_mapper():
             'estimated_time': composite(
                 EstimatedTime,
                 RoadmapModel.__table__.c.estimated_time_value,
+                RoadmapModel.__table__.c.estimated_time_unit,
             ),
-            # Handle the estimated_time_unit field - map it to the same column as estimated_time.unit
-            'estimated_time_unit': RoadmapModel.__table__.c.estimated_time_unit,
         }
     )

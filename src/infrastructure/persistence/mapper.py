@@ -1,4 +1,4 @@
-import modules.roadmap.infrastructure.mapper as roadmap_mapper
+import src.modules.roadmap.infrastructure.mapper as roadmap_mapper
 
 
 def start_mapper():

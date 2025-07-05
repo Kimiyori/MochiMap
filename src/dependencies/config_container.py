@@ -1,7 +1,7 @@
 from dependency_injector import containers
 from dependency_injector.providers import Configuration
 
-from core.config import APP_SETTINGS, AUTH_SETTINGS, DB_SETTINGS
+from src.core.config import APP_SETTINGS, AUTH_SETTINGS, DB_SETTINGS
 
 
 class ConfigContainer(containers.DeclarativeContainer):

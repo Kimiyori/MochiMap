@@ -1,6 +1,6 @@
 from keycloak import KeycloakOpenID
 
-from core.config.auth import AuthSettings
+from src.core.config.auth import AuthSettings
 
 
 class KeycloakClient:

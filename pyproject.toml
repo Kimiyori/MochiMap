@@ -21,13 +21,25 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "docker>=7.1.0",
+    "faker>=37.4.0",
+    "nest-asyncio>=1.6.0",
+    "pytest>=8.4.1",
+    "pytest-asyncio>=1.0.0",
     "ruff>=0.12.1",
     "taskipy>=1.14.1",
 ]
 
 [tool.taskipy.tasks]
-start = "python src/main.py"
+start = "python main.py"
+
 check = "uv run ruff check"
 "check:fix" = "uv run ruff check --fix"
+
 "migration:revision" = "alembic revision --autogenerate"
 "migration:update" = "alembic upgrade head"
+
+"tests" = "uv run pytest"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]

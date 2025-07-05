@@ -29,26 +29,26 @@ def async_transactional(
     def decorator(func: Callable[..., T]) -> Callable[..., T]:
         @wraps(func)
         async def wrapper(self, *args: Any, **kwargs: Any) -> Any:
-            async with self.uow:
-                session = self.uow.session
-                set_current_session(session)
-                needs_new_transaction = not session.in_transaction()
-
-                try:
-                    if needs_new_transaction:
-                        async with session.begin():
-                            result = await func(self, *args, **kwargs)
-                            if not read_only:
-                                await session.commit()
-                    else:
+            session = get_current_session()
+            
+            needs_new_transaction = not session.in_transaction()
+            try:
+                if needs_new_transaction:
+                    async with session.begin():
                         result = await func(self, *args, **kwargs)
+                        if not read_only:
+                            await session.commit()
+                        await session.close()
+                        return result
+                else:
+                    result = await func(self, *args, **kwargs)
                     return result
 
-                except Exception as exc:
-                    logger.error(f"Transaction error: {exc}")
-                    if session.in_transaction():
-                        await session.rollback()
-                    raise
+            except Exception as exc:
+                logger.error(f"Transaction error: {exc}")
+                if session.in_transaction():
+                    await session.rollback()
+                raise
 
         return cast(Callable[..., T], wrapper)
 
