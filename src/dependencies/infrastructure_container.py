@@ -6,6 +6,7 @@ from src.infrastructure.adapters.keycloak import KeycloakClient
 from src.infrastructure.persistence.connection.connection import AsyncDatabase
 from src.infrastructure.persistence.transaction.unit_of_work import SqlAlchemyUnitOfWork
 from src.modules.roadmap.infrastructure.uow import RoadmapUnitOfWork
+from src.modules.security.infrastructure.auth_service import AuthService
 
 
 class InfrastructureContainer(containers.DeclarativeContainer):
@@ -14,7 +15,9 @@ class InfrastructureContainer(containers.DeclarativeContainer):
     # Core infrastructure
     db = Singleton(AsyncDatabase, db_uri=DB_SETTINGS.database_uri)
 
-    auth = Singleton(KeycloakClient, auth_config=config.auth_config)
+    keycloak = Singleton(KeycloakClient, auth_config=config.auth_config)
+
+    auth_service = Singleton(AuthService, keycloak_client=keycloak)
     # Unit of Work
     uow = providers.Factory(
         SqlAlchemyUnitOfWork,

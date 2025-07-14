@@ -9,7 +9,7 @@ from src.core.routes import add_routes
 from src.dependencies.container import Container
 from src.infrastructure.persistence.mapper import start_mapper
 from src.modules.roadmap.use_cases import roadmap_router
-
+from src.modules.security.use_cases import auth_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -43,7 +43,7 @@ def create_app() -> FastAPI:
     )
     app.add_middleware(SessionMiddleware, secret_key="some-random-string")
 
-    add_routes([roadmap_router], app)
+    add_routes([auth_router,roadmap_router], app)
     return app
 
 
