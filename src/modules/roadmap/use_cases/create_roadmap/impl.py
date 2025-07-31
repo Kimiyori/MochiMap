@@ -1,6 +1,6 @@
 from src.common.protocols.use_case import BaseUseCase
-from src.infrastructure.persistence.transaction.transaction import async_transactional
-from src.infrastructure.persistence.transaction.unit_of_work import SqlAlchemyUnitOfWork
+from src.infrastructure.persistence.transaction import async_transactional
+from src.infrastructure.persistence.unit_of_work import SqlAlchemyUnitOfWork
 from src.modules.roadmap.domain.roadmap import Roadmap
 from src.modules.roadmap.use_cases.create_roadmap.command import CreateRoadmapCommand
 

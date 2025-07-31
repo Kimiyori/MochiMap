@@ -3,34 +3,23 @@ from typing import TypeVar, final
 from sqlalchemy import delete, exists, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.infrastructure.persistence.base.base_entities import Base
+from src.infrastructure.persistence.models.base_model import Base
 
 ModelT = TypeVar("ModelT", bound=Base)
-SessionT = TypeVar("SessionT", bound=AsyncSession)
 
 
-class AbstractRepository[SessionT: AsyncSession]:
-    """Abstract Repository wiith base for concrete implementation.
-
-    Args:
-        Generic (_type_): Type of table that you'll be using.
-
-    """
-
-    @final
-    def __init__(self, session: SessionT) -> None:
-        self.session = session
-
-
-class SqlAlchemyRepository[ModelT: Base](AbstractRepository[AsyncSession]):
+class SqlAlchemyRepository[ModelT: Base]:
     """SqlAlchemy Repository.
 
     Args:
-        Generic (_type_): Type of table that you'll be using.
+        Generic (_type_): Type of table that you'll be using.1
 
     """
 
     model: type[ModelT]
+
+    def __init__(self, session: AsyncSession) -> None:
+        self.session = session
 
     @final
     def add(self, item: ModelT):
@@ -45,21 +34,13 @@ class SqlAlchemyRepository[ModelT: Base](AbstractRepository[AsyncSession]):
         await self.session.delete(item)
 
     @final
-    async def get_all_by_field(
-        self, field: str, value: str | list[str], options: list | None = None
-    ):
+    async def get_all_by_field(self, field: str, value: str | list[str], options: list | None = None):
         if isinstance(value, list):
             query = (
-                select(self.model)
-                .where(getattr(self.model, field).in_(value))
-                .order_by(self.model.created_at.desc())
+                select(self.model).where(getattr(self.model, field).in_(value))
             )
         else:
-            query = (
-                select(self.model)
-                .where(getattr(self.model, field) == value)
-                .order_by(self.model.created_at.desc())
-            )
+            query = select(self.model).where(getattr(self.model, field) == value)
         if options:
             for option in options:
                 query = query.options(option)
@@ -87,26 +68,18 @@ class SqlAlchemyRepository[ModelT: Base](AbstractRepository[AsyncSession]):
 
     @final
     async def get_all(self):
-        query = select(self.model).order_by(self.model.created_at.desc())
+        query = select(self.model)
         result = await self.session.execute(query)
         return result.scalars().all()
 
     @final
     async def update_by_field(self, field: str, value: str | int, data: dict):
-        stmt = (
-            update(self.model).where(getattr(self.model, field) == value).values(**data)
-        )
+        stmt = update(self.model).where(getattr(self.model, field) == value).values(**data)
         await self.session.execute(stmt)
 
     @final
-    async def update_all_by_field(
-        self, field: str, values: list[str | int], data: dict
-    ):
-        stmt = (
-            update(self.model)
-            .where(getattr(self.model, field).in_(values))
-            .values(**data)
-        )
+    async def update_all_by_field(self, field: str, values: list[str | int], data: dict):
+        stmt = update(self.model).where(getattr(self.model, field).in_(values)).values(**data)
         await self.session.execute(stmt)
 
     @final

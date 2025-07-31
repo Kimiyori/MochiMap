@@ -1,29 +1,22 @@
-import uuid
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Integer, String
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.infrastructure.persistence.base.base_entities import Base, UUIDMixin
-from src.modules.roadmap.domain.value_objects import DifficultyLevel, TimeUnit
+from src.infrastructure.persistence.models.base_model import Base, TimestampMixin, UUIDMixin
 
 if TYPE_CHECKING:
-    from src.infrastructure.persistence.models.connections import ConnectionModel
-    from src.infrastructure.persistence.models.node import NodeModel
-
+    from src.infrastructure.persistence.models.node.node import NodeModel
 
 # SQLAlchemy models
-class RoadmapModel(Base, UUIDMixin):
+class RoadmapModel(Base,TimestampMixin, UUIDMixin):
     __tablename__ = "roadmaps"
 
     title: Mapped[str] = mapped_column(String, nullable=False)
     description: Mapped[str] = mapped_column(String)
-    owner_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
-    difficulty_level: Mapped[DifficultyLevel] = mapped_column(nullable=False)
-    estimated_time_value: Mapped[int] = mapped_column(Integer)
-    estimated_time_unit: Mapped[TimeUnit] = mapped_column()
 
     # Relationships
-    nodes: Mapped[list["NodeModel"]] = relationship(back_populates="roadmap", cascade="all, delete-orphan")
-    connections: Mapped[list["ConnectionModel"]] = relationship(back_populates="roadmap", cascade="all, delete-orphan")
+    nodes: Mapped[list["NodeModel"]] = relationship(
+        back_populates="roadmap", cascade="all, delete-orphan", overlaps="roadmap,nodes"
+    )
+    # connections: Mapped[list["ConnectionModel"]] = relationship(back_populates="roadmap", cascade="all, delete-orphan")

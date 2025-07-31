@@ -41,11 +41,10 @@ def async_transactional(
                         await session.close()
                         return result
                 else:
-                    result = await func(self, *args, **kwargs)
-                    return result
+                    return await func(self, *args, **kwargs)
 
-            except Exception as exc:
-                logger.error(f"Transaction error: {exc}")
+            except Exception:
+                logger.exception("Transaction error")
                 if session.in_transaction():
                     await session.rollback()
                 raise

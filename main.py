@@ -2,7 +2,6 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import clear_mappers
 from starlette.middleware.sessions import SessionMiddleware
 
 from src.core.routes import add_routes
@@ -19,7 +18,7 @@ async def lifespan(app: FastAPI):
 
     yield
 
-    clear_mappers()
+    # clear_mappers()
     await db.disconnect()
 
 
@@ -41,7 +40,7 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    app.add_middleware(SessionMiddleware, secret_key="some-random-string")
+    app.add_middleware(SessionMiddleware, secret_key="some-random-string")  # noqa: S106
 
     add_routes([roadmap_router], app)
     return app

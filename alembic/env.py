@@ -7,8 +7,8 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 from src.core.config import DB_SETTINGS
-from src.infrastructure.persistence.base.base_entities import Base
 from src.infrastructure.persistence.models import *  # noqa: F403
+from src.infrastructure.persistence.models.base_model import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
