@@ -31,13 +31,16 @@ dev = [
 ]
 
 [tool.taskipy.tasks]
-start = "python main.py"
+"start" = "python main.py"
 
-check = "uv run ruff check"
+"check" = "uv run ruff check"
 "check:fix" = "uv run ruff check --fix"
 
 "migration:revision" = "alembic revision --autogenerate"
 "migration:update" = "alembic upgrade head"
+
+"tests:unit" = "pytest tests/unit"
+"tests:integration" = "pytest tests/integration"
 
 "tests" = "uv run pytest"
 

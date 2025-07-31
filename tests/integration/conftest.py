@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from alembic import command
 from alembic.config import Config
 from main import create_app
-from src.infrastructure.persistence.connection.connection import AsyncDatabase
+from src.infrastructure.persistence.engine import AsyncDatabase
 from tests.integration.utils.config import get_container_status, get_db_uri, run_db_container, set_test_env
 
 nest_asyncio.apply()

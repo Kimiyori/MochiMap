@@ -24,7 +24,7 @@ class UUIDMixin:
     id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
 
 
-class Base(AsyncAttrs, SQLBase, TimestampMixin):
+class Base(AsyncAttrs, SQLBase):
     """Base class for all models."""
 
     __abstract__ = True

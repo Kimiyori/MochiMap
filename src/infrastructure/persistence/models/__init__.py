@@ -1,11 +1,7 @@
-from .connections import ConnectionModel
-from .node import NodeModel
-from .resource import ResourceModel
+from .node.node import NodeModel
 from .roadmap.roadmap import RoadmapModel
 
 __all__ = [
-    "ConnectionModel",
     "NodeModel",
-    "ResourceModel",
     "RoadmapModel"
 ]

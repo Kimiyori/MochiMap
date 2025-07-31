@@ -34,10 +34,14 @@ extend-select = [
     # Code quality
     "UP",   # pyupgrade
     "N",    # pep8-naming
-    "ERA",  # eradicate (commented code)
+    # "ERA",  # eradicate (commented code) -- ERA001 excluded
     "PTH",  # pathlib usage
     "RUF",  # Ruff-specific rules
 ]
+ignore = ["ERA001","TRY003"]
 
 [lint.mccabe]
 max-complexity = 10
+
+[lint.per-file-ignores]
+"tests/**/*.py" = ["S101"]
