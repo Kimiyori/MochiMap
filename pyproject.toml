@@ -11,6 +11,7 @@ dependencies = [
     "dependency-injector>=4.48.1",
     "fastapi[standard]>=0.115.13",
     "itsdangerous>=2.2.0",
+    "psycopg2-binary>=2.9.10",
     "pydantic>=2.11.7",
     "pydantic-settings>=2.10.1",
     "python-keycloak>=5.6.0",
@@ -26,6 +27,8 @@ dev = [
     "nest-asyncio>=1.6.0",
     "pytest>=8.4.1",
     "pytest-asyncio>=1.0.0",
+    "pytest-cov>=6.2.1",
+    "pytest-xdist>=3.8.0",
     "ruff>=0.12.1",
     "taskipy>=1.14.1",
 ]
@@ -39,10 +42,10 @@ dev = [
 "migration:revision" = "alembic revision --autogenerate"
 "migration:update" = "alembic upgrade head"
 
-"tests:unit" = "pytest tests/unit"
-"tests:integration" = "pytest tests/integration"
+"tests:unit" = "python tests/run_tests.py --only-unit"
+"tests:integration" = "python tests/run_tests.py --only-integration"
+"tests:all" = "python tests/run_tests.py"
 
-"tests" = "uv run pytest"
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

@@ -30,7 +30,6 @@ def async_transactional(
         @wraps(func)
         async def wrapper(self, *args: Any, **kwargs: Any) -> Any:
             session = get_current_session()
-            
             needs_new_transaction = not session.in_transaction()
             try:
                 if needs_new_transaction:

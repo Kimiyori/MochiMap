@@ -11,3 +11,5 @@ wheels/
 .vscode/
 .ruff_cache/
 .pytest_cache/
+.github/
+.coverage

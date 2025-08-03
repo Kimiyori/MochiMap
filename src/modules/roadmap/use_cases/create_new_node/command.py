@@ -11,7 +11,7 @@ class BaseNodeCommand(BaseRequestCommand):
 
 
 class CreateLearningNote(BaseNodeCommand):
-    content: str = ""
+    content: str | None = None
 
 
 class CreateResourceBookmark(BaseNodeCommand):
@@ -26,7 +26,8 @@ class CreateNodeCommand(BaseRequestCommand):
     position_y: float
 
     @model_validator(mode="before")
-    def validate_data(self, values):
+    @classmethod
+    def validate_data(cls, values: dict) -> dict:
         node_type = values.get("type")
         data = values.get("data")
         if node_type == NodeType.LEARNING_NOTE:

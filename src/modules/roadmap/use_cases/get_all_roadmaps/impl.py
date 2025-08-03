@@ -1,7 +1,7 @@
 from src.common.protocols.use_case import BaseUseCase
 from src.infrastructure.persistence.transaction import async_transactional
 from src.infrastructure.persistence.unit_of_work import SqlAlchemyUnitOfWork
-from src.modules.roadmap.domain.roadmap import Roadmap
+from src.modules.roadmap.domain.roadmap.roadmap import Roadmap
 
 
 class GetUserRoadmapsUseCase(BaseUseCase):

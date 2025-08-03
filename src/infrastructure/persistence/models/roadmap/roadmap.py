@@ -8,12 +8,13 @@ from src.infrastructure.persistence.models.base_model import Base, TimestampMixi
 if TYPE_CHECKING:
     from src.infrastructure.persistence.models.node.node import NodeModel
 
+
 # SQLAlchemy models
-class RoadmapModel(Base,TimestampMixin, UUIDMixin):
+class RoadmapModel(Base, TimestampMixin, UUIDMixin):
     __tablename__ = "roadmaps"
 
     title: Mapped[str] = mapped_column(String, nullable=False)
-    description: Mapped[str] = mapped_column(String)
+    description: Mapped[str] = mapped_column(String, nullable=True)
 
     # Relationships
     nodes: Mapped[list["NodeModel"]] = relationship(

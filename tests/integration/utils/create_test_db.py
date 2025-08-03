@@ -26,31 +26,22 @@ def run_db_container():
         remove=True,
         ports={"5432/tcp": os.environ.get("POSTGRES_PORT")},
         healthcheck={
-            "test": [
-                "CMD",
-                "pg_isready",
-                "-d",
-                os.environ.get("POSTGRES_DB"),
-                "-U",
-                os.environ.get("POSTGRES_USER")
-            ],
+            "test": ["CMD", "pg_isready", "-d", os.environ.get("POSTGRES_DB"), "-U", os.environ.get("POSTGRES_USER")],
             "interval": 1000000000,  # 1 second in nanoseconds
             "timeout": 1000000000,  # 1 second in nanoseconds
             "retries": 10,
-        }
+        },
     )
 
 
 
 def get_container_status(container_name):
     client = docker.from_env()
-    return client.api.inspect_container(
-        container_name
-    )["State"]["Health"]["Status"]
+    return client.api.inspect_container(container_name)["State"]["Health"]["Status"]
 
 
 def get_db_uri():
     return (
-        f'postgresql+asyncpg://{os.environ.get("POSTGRES_USER")}:{os.environ.get("POSTGRES_PASSWORD")}'
-        f'@localhost:{os.environ.get("POSTGRES_PORT")}/{os.environ.get("POSTGRES_DB")}'
+        f"postgresql+asyncpg://{os.environ.get('POSTGRES_USER')}:{os.environ.get('POSTGRES_PASSWORD')}"
+        f"@localhost:{os.environ.get('POSTGRES_PORT')}/{os.environ.get('POSTGRES_DB')}"
     )

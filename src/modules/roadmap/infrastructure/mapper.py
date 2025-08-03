@@ -5,7 +5,7 @@ from src.infrastructure.persistence.models.node.node import NodeModel
 from src.infrastructure.persistence.models.roadmap.roadmap import RoadmapModel
 from src.modules.roadmap.domain.node.node import Node
 from src.modules.roadmap.domain.node.value_objects import Position
-from src.modules.roadmap.domain.roadmap import Roadmap
+from src.modules.roadmap.domain.roadmap.roadmap import Roadmap
 
 
 def start_mapper():

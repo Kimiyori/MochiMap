@@ -1,4 +1,5 @@
 import asyncio
+import os
 from logging.config import fileConfig
 
 from sqlalchemy import pool
@@ -27,7 +28,18 @@ target_metadata = Base.metadata
 # can be acquired:
 # ... etc.
 
-POSTGRES_URL = DB_SETTINGS.database_uri
+is_test = os.environ.get("POSTGRES_DB") == "test_db"
+
+# Get database URI
+if is_test:
+    # Use test database connection string
+    from tests.integration.utils.create_test_db import get_db_uri
+
+    POSTGRES_URL = get_db_uri()
+else:
+    # Use regular database connection
+    POSTGRES_URL = DB_SETTINGS.database_uri
+
 config.set_main_option("sqlalchemy.url", POSTGRES_URL)
 
 

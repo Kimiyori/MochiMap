@@ -5,7 +5,7 @@ from typing import final
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 
-from src.infrastructure.persistence.base.base_repository import ModelT, SqlAlchemyRepository
+from src.infrastructure.persistence.base.base_repository import SqlAlchemyRepository
 from src.infrastructure.persistence.transaction import get_current_session, set_current_session
 
 
@@ -22,7 +22,6 @@ class SqlAlchemyUnitOfWork[ModelT]:
     def __init__(self, engine: AsyncEngine, repository_cls: type[SqlAlchemyRepository[ModelT]]) -> None:
         self.session: AsyncSession | None = None
         context_session = get_current_session()
-
         if context_session is not None:
             self.session = context_session
         else:
