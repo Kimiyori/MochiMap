@@ -18,7 +18,6 @@ async def lifespan(app: FastAPI):
 
     yield
 
-    # clear_mappers()
     await db.disconnect()
 
 

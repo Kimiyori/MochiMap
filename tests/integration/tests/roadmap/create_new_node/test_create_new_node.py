@@ -19,8 +19,10 @@ class TestCreateNewNodeUseCase:
         data = {
             "type": NodeType.LEARNING_NOTE,
             "data": {"title": faker.sentence(), "content": faker.paragraph()},
-            "position_x": faker.random_int(min=0, max=100),
-            "position_y": faker.random_int(min=0, max=100),
+            "position": {
+                "x": faker.pyfloat(min_value=0, max_value=100),
+                "y": faker.pyfloat(min_value=0, max_value=100),
+            },
         }
 
         response = await client.post(f"/roadmap/{roadmap_id}/node", json=data)
@@ -36,8 +38,10 @@ class TestCreateNewNodeUseCase:
         data = {
             "type": NodeType.RESOURCE_BOOKMARK,
             "data": {"title": faker.sentence(), "url": faker.url()},
-            "position_x": faker.random_int(min=0, max=100),
-            "position_y": faker.random_int(min=0, max=100),
+            "position": {
+                "x": faker.pyfloat(min_value=0, max_value=100),
+                "y": faker.pyfloat(min_value=0, max_value=100),
+            },
         }
         response = await client.post(f"/roadmap/{roadmap_id}/node", json=data)
 
@@ -51,12 +55,13 @@ class TestCreateNewNodeErrorUseCase:
         data = {
             "type": NodeType.LEARNING_NOTE,
             "data": {"title": faker.sentence(), "content": faker.paragraph()},
-            "position_x": faker.random_int(min=0, max=100),
-            "position_y": faker.random_int(min=0, max=100),
+            "position": {
+                "x": faker.pyfloat(min_value=0, max_value=100),
+                "y": faker.pyfloat(min_value=0, max_value=100),
+            },
         }
 
         response = await client.post(f"/roadmap/{non_existent_roadmap_id}/node", json=data)
-
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
     @pytest.mark.parametrize("num_roadmaps", [1])
@@ -66,27 +71,26 @@ class TestCreateNewNodeErrorUseCase:
         roadmap_id = created_roadmaps[0].id
         data = {
             "type": NodeType.LEARNING_NOTE,
-            "data": {
-                # "title" is missing
-                "content": faker.paragraph()
+            "data": {"content": faker.paragraph()},
+            "position": {
+                "x": faker.pyfloat(min_value=0, max_value=100),
+                "y": faker.pyfloat(min_value=0, max_value=100),
             },
-            "position_x": faker.random_int(min=0, max=100),
-            "position_y": faker.random_int(min=0, max=100),
         }
         response = await client.post(f"/roadmap/{roadmap_id}/node", json=data)
-
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     async def test_create_node_invalid_node_type_fails(self, faker: Faker, client: AsyncClient) -> None:
         data = {
             "type": "INVALID_TYPE",
             "data": {"title": faker.sentence()},
-            "position_x": faker.random_int(min=0, max=100),
-            "position_y": faker.random_int(min=0, max=100),
+            "position": {
+                "x": faker.pyfloat(min_value=0, max_value=100),
+                "y": faker.pyfloat(min_value=0, max_value=100),
+            },
         }
 
         response = await client.post(f"/roadmap/{uuid4()}/node", json=data)
-
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     async def test_create_resource_node_missing_url_fails(self, faker: Faker, client: AsyncClient) -> None:
@@ -95,10 +99,11 @@ class TestCreateNewNodeErrorUseCase:
             "data": {
                 "title": faker.sentence(),
             },
-            "position_x": faker.random_int(min=0, max=100),
-            "position_y": faker.random_int(min=0, max=100),
+            "position": {
+                "x": faker.pyfloat(min_value=0, max_value=100),
+                "y": faker.pyfloat(min_value=0, max_value=100),
+            },
         }
 
         response = await client.post(f"/roadmap/{uuid4()}/node", json=data)
-
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY

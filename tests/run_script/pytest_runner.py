@@ -13,7 +13,7 @@ def run_pytest(test_path: str, additional_args: list[str], parallel: bool = True
         else:
             print(f"Warning: Skipping potentially unsafe argument: {arg}")
 
-    base_command = ["pytest", "--cov=src"]
+    base_command = ["pytest"]
     if parallel:
         base_command.extend(["-n", "auto"])
     base_command.append(test_path)

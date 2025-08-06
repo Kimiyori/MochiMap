@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from sqlalchemy import ForeignKey, Integer, String, TypeDecorator
+from sqlalchemy import Float, ForeignKey, String, TypeDecorator
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, composite, mapped_column, relationship
 
@@ -35,8 +35,8 @@ class NodeModel(Base, UUIDMixin):
     type: Mapped[NodeType] = mapped_column(String, nullable=False)
     position: Mapped[Point] = composite(
         Point,
-        mapped_column("position_x", Integer, nullable=False),
-        mapped_column("position_y", Integer, nullable=False),
+        mapped_column("position_x", Float, nullable=False),
+        mapped_column("position_y", Float, nullable=False),
     )
     data: Mapped[dict] = mapped_column(NodeDataType, default=dict)
 

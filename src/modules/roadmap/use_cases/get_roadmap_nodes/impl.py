@@ -1,7 +1,4 @@
-from dataclasses import asdict
 from uuid import UUID
-
-from pydantic import TypeAdapter
 
 from src.common.protocols.use_case import BaseUseCase
 from src.infrastructure.persistence.transaction import async_transactional
@@ -16,6 +13,4 @@ class GetRoadmapNodesUseCase(BaseUseCase):
 
     @async_transactional(read_only=True)
     async def invoke(self, roadmap_id: UUID) -> list[GetRoadmapNodesResponseDTO]:
-        nodes = await self.uow.repository.get_all_by_field("roadmap_id", roadmap_id)
-        adapter = TypeAdapter(list[GetRoadmapNodesResponseDTO])
-        return adapter.validate_python(asdict(node) for node in nodes)
+        return await self.uow.repository.get_all_by_field("roadmap_id", roadmap_id)
