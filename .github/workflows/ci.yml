@@ -1,0 +1,36 @@
+name: Backend CI
+
+on:
+  push:
+    paths:
+      - ".github/workflows/ci.yml"
+  pull_request:
+    paths:
+      - ".github/workflows/ci.yml"
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup uv and Python
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Ruff lint
+        run: uv run task check
+
+      - name: Run unit tests
+        run: uv run task tests:unit
+
+      - name: Run integration tests (starts Postgres via Docker)
+        env:
+          DOCKER_BUILDKIT: "1"
+        run: uv run task tests:integration
