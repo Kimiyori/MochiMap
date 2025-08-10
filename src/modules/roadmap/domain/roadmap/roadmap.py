@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from uuid import UUID, uuid4
 
+from src.modules.roadmap.domain.edge.edge import Edge
 from src.modules.roadmap.domain.node.node import Node
 from src.modules.roadmap.domain.roadmap.errors import RoadmapValidationError
 from src.modules.roadmap.use_cases.create_new_node.command import CreateNodeCommand
@@ -11,8 +12,9 @@ from src.modules.roadmap.use_cases.create_roadmap.command import CreateRoadmapCo
 class Roadmap:
     id: UUID
     title: str
-    description: str|None = ""
+    description: str | None = ""
     nodes: list[Node] | None = field(default_factory=list)
+    edges: list[Edge] | None = field(default_factory=list)
 
     def __post_init__(self):
         self.validate()
@@ -37,3 +39,8 @@ class Roadmap:
         node = Node.new_node(self.id, command)
         self.nodes.append(node)
         return node
+
+    def create_edge(self, source_id: UUID, target_id: UUID) -> Edge:
+        edge = Edge.new_edge(self.id, source_id, target_id)
+        self.edges.append(edge)
+        return edge

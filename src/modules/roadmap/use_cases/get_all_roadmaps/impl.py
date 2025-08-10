@@ -1,12 +1,9 @@
 from src.common.protocols.use_case import BaseUseCase
 from src.infrastructure.persistence.transaction import async_transactional
-from src.infrastructure.persistence.unit_of_work import SqlAlchemyUnitOfWork
-from src.modules.roadmap.domain.roadmap.roadmap import Roadmap
+from src.modules.roadmap.infrastructure.uow import RoadmapUnitOfWork
 
 
-class GetUserRoadmapsUseCase(BaseUseCase):
-    def __init__(self, uow: SqlAlchemyUnitOfWork[Roadmap]) -> None:
-        self.uow = uow
+class GetUserRoadmapsUseCase(BaseUseCase[RoadmapUnitOfWork]):
 
     @async_transactional(read_only=True)
     async def invoke(self):

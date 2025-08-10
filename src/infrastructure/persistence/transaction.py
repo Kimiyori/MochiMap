@@ -10,9 +10,7 @@ T = TypeVar("T")
 logger = logging.getLogger(__name__)
 
 
-current_session_context: ContextVar[AsyncSession | None] = ContextVar(
-    "current_session", default=None
-)
+current_session_context: ContextVar[AsyncSession | None] = ContextVar("current_session", default=None)
 
 
 def set_current_session(session: AsyncSession) -> None:
@@ -30,6 +28,7 @@ def async_transactional(
         @wraps(func)
         async def wrapper(self, *args: Any, **kwargs: Any) -> Any:
             session = get_current_session()
+
             needs_new_transaction = not session.in_transaction()
             try:
                 if needs_new_transaction:
@@ -44,7 +43,7 @@ def async_transactional(
 
             except Exception:
                 logger.exception("Transaction error")
-                if session.in_transaction():
+                if session is not None and session.in_transaction():
                     await session.rollback()
                 raise
 

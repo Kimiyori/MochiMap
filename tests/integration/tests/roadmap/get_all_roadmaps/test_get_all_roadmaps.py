@@ -3,18 +3,21 @@ from fastapi import status
 from httpx import AsyncClient
 
 
+async def make_request(client: AsyncClient):
+    return await client.get("/roadmap")
+
+
 class TestGetAllRoadmapsUseCase:
     async def test_get_all_roadmaps_empty_list_success(self, client:AsyncClient) -> None:
-        response = await client.get("/roadmap")
+        response = await make_request(client)
 
         assert response.status_code == status.HTTP_200_OK
         roadmaps = response.json()
         assert isinstance(roadmaps, list)
         assert len(roadmaps) == 0
 
-    @pytest.mark.parametrize("num_roadmaps", [1])
     async def test_get_all_roadmaps_single_roadmap_success(self, client:AsyncClient, created_roadmaps) -> None:
-        response = await client.get("/roadmap")
+        response = await make_request(client)
 
         assert response.status_code == status.HTTP_200_OK
         roadmaps = response.json()
@@ -28,7 +31,7 @@ class TestGetAllRoadmapsUseCase:
 
     @pytest.mark.parametrize("num_roadmaps", [3])
     async def test_get_all_roadmaps_multiple_roadmaps_success(self, client:AsyncClient, created_roadmaps) -> None:
-        response = await client.get("/roadmap")
+        response = await make_request(client)
 
         assert response.status_code == status.HTTP_200_OK
         roadmaps = response.json()
@@ -44,7 +47,7 @@ class TestGetAllRoadmapsUseCase:
     async def test_get_all_roadmaps_with_empty_descriptions(
         self, client:AsyncClient, created_roadmaps_with_some_empty_descriptions
     ) -> None:
-        response = await client.get("/roadmap")
+        response = await make_request(client)
 
         assert response.status_code == status.HTTP_200_OK
         roadmaps = response.json()

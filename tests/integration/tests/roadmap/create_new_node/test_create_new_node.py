@@ -1,4 +1,4 @@
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
 from faker import Faker
@@ -10,8 +10,14 @@ from src.modules.roadmap.domain.node.value_objects import NodeType
 from src.modules.roadmap.domain.roadmap.roadmap import Roadmap
 
 
+async def make_request( client: AsyncClient, roadmap_id: UUID, data: dict):
+    return await client.post(f"/roadmap/{roadmap_id}/node", json=data)
+
+
+@pytest.mark.parametrize("model", [NodeModel])
 class TestCreateNewNodeUseCase:
-    @pytest.mark.parametrize("num_roadmaps,model", [(1, NodeModel)])
+
+
     async def test_create_learning_note_node_success(
         self, faker: Faker, client: AsyncClient, created_roadmaps: list[Roadmap], check_if_exists
     ) -> None:
@@ -25,12 +31,11 @@ class TestCreateNewNodeUseCase:
             },
         }
 
-        response = await client.post(f"/roadmap/{roadmap_id}/node", json=data)
+        response = await make_request(client, roadmap_id, data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert await check_if_exists()
 
-    @pytest.mark.parametrize("num_roadmaps,model", [(1, NodeModel)])
     async def test_create_resource_bookmark_node_success(
         self, faker: Faker, client: AsyncClient, created_roadmaps: list[Roadmap], check_if_exists
     ) -> None:
@@ -43,7 +48,7 @@ class TestCreateNewNodeUseCase:
                 "y": faker.pyfloat(min_value=0, max_value=100),
             },
         }
-        response = await client.post(f"/roadmap/{roadmap_id}/node", json=data)
+        response = await make_request(client, roadmap_id, data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert await check_if_exists()
@@ -61,7 +66,7 @@ class TestCreateNewNodeErrorUseCase:
             },
         }
 
-        response = await client.post(f"/roadmap/{non_existent_roadmap_id}/node", json=data)
+        response = await make_request(client, non_existent_roadmap_id, data)
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
     @pytest.mark.parametrize("num_roadmaps", [1])
@@ -77,7 +82,7 @@ class TestCreateNewNodeErrorUseCase:
                 "y": faker.pyfloat(min_value=0, max_value=100),
             },
         }
-        response = await client.post(f"/roadmap/{roadmap_id}/node", json=data)
+        response = await make_request(client, roadmap_id, data)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     async def test_create_node_invalid_node_type_fails(self, faker: Faker, client: AsyncClient) -> None:
@@ -90,7 +95,7 @@ class TestCreateNewNodeErrorUseCase:
             },
         }
 
-        response = await client.post(f"/roadmap/{uuid4()}/node", json=data)
+        response = await make_request(client, uuid4(), data)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     async def test_create_resource_node_missing_url_fails(self, faker: Faker, client: AsyncClient) -> None:
@@ -105,5 +110,5 @@ class TestCreateNewNodeErrorUseCase:
             },
         }
 
-        response = await client.post(f"/roadmap/{uuid4()}/node", json=data)
+        response = await make_request(client, uuid4(), data)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY

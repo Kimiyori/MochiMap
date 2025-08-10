@@ -5,7 +5,6 @@ from typing import final
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 
-from src.infrastructure.persistence.base.base_repository import SqlAlchemyRepository
 from src.infrastructure.persistence.transaction import get_current_session, set_current_session
 
 
@@ -16,10 +15,10 @@ class UnitOfWorkError(Exception):
         super().__init__(f"Unit of Work Error: {error}")
 
 
-class SqlAlchemyUnitOfWork[ModelT]:
+class SqlAlchemyUnitOfWork[RepositoryT]:
     """SqlAlchemy instance unit of work"""
 
-    def __init__(self, engine: AsyncEngine, repository_cls: type[SqlAlchemyRepository[ModelT]]) -> None:
+    def __init__(self, engine: AsyncEngine, repository_cls: type[RepositoryT]) -> None:
         self.session: AsyncSession | None = None
         context_session = get_current_session()
         if context_session is not None:
@@ -28,7 +27,7 @@ class SqlAlchemyUnitOfWork[ModelT]:
             self.session = AsyncSession(engine)
             set_current_session(self.session)
 
-        self.repository = repository_cls(self.session)
+        self.repository: RepositoryT = repository_cls(self.session)
 
     @final
     async def commit(self) -> None:

@@ -60,6 +60,7 @@ async def transactional_session(db_override) -> AsyncGenerator[tuple[AsyncSessio
     try:
         yield session, transaction_token
     finally:
+        await session.flush()
         if transaction.is_active:
             await transaction.rollback()
 

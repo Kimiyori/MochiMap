@@ -4,6 +4,7 @@ from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.infrastructure.persistence.models.base_model import Base, TimestampMixin, UUIDMixin
+from src.infrastructure.persistence.models.edges.edges import EdgeModel
 
 if TYPE_CHECKING:
     from src.infrastructure.persistence.models.node.node import NodeModel
@@ -18,6 +19,10 @@ class RoadmapModel(Base, TimestampMixin, UUIDMixin):
 
     # Relationships
     nodes: Mapped[list["NodeModel"]] = relationship(
-        back_populates="roadmap", cascade="all, delete-orphan", overlaps="roadmap,nodes"
+        back_populates="roadmap",
+        cascade="all, delete-orphan",
     )
-    # connections: Mapped[list["ConnectionModel"]] = relationship(back_populates="roadmap", cascade="all, delete-orphan")
+    edges: Mapped[list["EdgeModel"]] = relationship(
+        back_populates="roadmap",
+        cascade="all, delete-orphan",
+    )

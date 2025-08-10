@@ -18,7 +18,6 @@ class Point:
     y: float
 
 
-
 class NodeDataType(TypeDecorator):
     impl = JSONB
 
@@ -26,7 +25,6 @@ class NodeDataType(TypeDecorator):
         if value is None:
             return None
         return value.__dict__ if hasattr(value, "__dict__") else value
-
 
 
 class NodeModel(Base, UUIDMixin):
@@ -41,4 +39,4 @@ class NodeModel(Base, UUIDMixin):
     data: Mapped[dict] = mapped_column(NodeDataType, default=dict)
 
     # Relationships
-    roadmap: Mapped["RoadmapModel"] = relationship(back_populates="nodes", overlaps="roadmap,nodes")
+    roadmap: Mapped["RoadmapModel"] = relationship(back_populates="nodes")
