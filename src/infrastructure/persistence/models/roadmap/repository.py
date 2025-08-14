@@ -1,4 +1,4 @@
-from sqlalchemy import exists, func, select
+from sqlalchemy import and_, exists, func, or_, select
 
 from src.infrastructure.persistence.base.base_repository import SqlAlchemyRepository
 from src.modules.roadmap.domain.edge.edge import Edge
@@ -21,8 +21,16 @@ class BaseRoadmapRepository(SqlAlchemyRepository[Roadmap]):
         stmt = select(
             exists().where(
                 Edge.roadmap_id == roadmap_id,
-                Edge.source_id == source_id,
-                Edge.target_id == target_id,
+                or_(
+                    and_(
+                        Edge.source_id == source_id,
+                        Edge.target_id == target_id,
+                    ),
+                    and_(
+                        Edge.source_id == target_id,
+                        Edge.target_id == source_id,
+                    ),
+                ),
             )
         )
         result = await self.session.execute(stmt)

@@ -3,7 +3,7 @@ from dependency_injector.providers import Singleton
 
 from src.core.config import DB_SETTINGS
 from src.infrastructure.persistence.engine import AsyncDatabase
-from src.modules.roadmap.infrastructure.uow import NodeUnitOfWork, RoadmapUnitOfWork
+from src.modules.roadmap.infrastructure.uow import EdgeUnitOfWork, NodeUnitOfWork, RoadmapUnitOfWork
 
 
 class InfrastructureContainer(containers.DeclarativeContainer):
@@ -20,5 +20,9 @@ class InfrastructureContainer(containers.DeclarativeContainer):
     )
     node_uow = providers.Factory(
         NodeUnitOfWork,
+        engine=db.provided.engine,
+    )
+    edge_uow = providers.Factory(
+        EdgeUnitOfWork,
         engine=db.provided.engine,
     )

@@ -41,6 +41,7 @@ dev = [
 
 "migration:revision" = "alembic revision --autogenerate"
 "migration:update" = "alembic upgrade head"
+"migration:revert" = "alembic downgrade -1"
 
 "tests:unit" = "python tests/run_tests.py --only-unit"
 "tests:integration" = "python tests/run_tests.py --only-integration"

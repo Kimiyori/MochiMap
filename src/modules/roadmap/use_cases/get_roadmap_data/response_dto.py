@@ -4,6 +4,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from src.modules.roadmap.domain.edge.value_objects import EdgeType
 from src.modules.roadmap.domain.node.value_objects import NodeType
 
 
@@ -30,7 +31,7 @@ class PositionDTO(BaseModel):
 
 class GetRoadmapNodesResponseDTO(BaseModel):
     id:UUID
-    type: Literal[NodeType.LEARNING_NOTE, NodeType.RESOURCE_BOOKMARK] = Field(..., description="Type of node")
+    type: NodeType
     data: LearningNodeDataResponseDTO | ResourceNodeDataResponseDTO
     position: PositionDTO
 
@@ -38,6 +39,7 @@ class GetRoadmapEdgesResponseDTO(BaseModel):
     id: UUID
     source: UUID
     target: UUID
+    type:EdgeType
 
     model_config = ConfigDict(populate_by_name=True, from_attributes=True)
 

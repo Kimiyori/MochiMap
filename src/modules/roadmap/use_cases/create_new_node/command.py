@@ -1,6 +1,5 @@
-from typing import Literal
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, model_validator
 
 from src.common.pydantic import BaseRequestCommand
 from src.modules.roadmap.domain.node.value_objects import NodeType
@@ -24,7 +23,7 @@ class CreateResourceBookmark(BaseNodeCommand):
 
 
 class CreateNodeCommand(BaseRequestCommand):
-    type: Literal[NodeType.LEARNING_NOTE, NodeType.RESOURCE_BOOKMARK] = Field(..., description="Type of node")
+    type: NodeType
     data: CreateLearningNote | CreateResourceBookmark
     position: PositionDTO
 
