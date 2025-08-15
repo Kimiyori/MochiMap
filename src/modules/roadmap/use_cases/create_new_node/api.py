@@ -4,7 +4,7 @@ from uuid import UUID
 from dependency_injector.wiring import Provide, inject
 from fastapi import Depends, status
 
-from src.dependencies.container import Container
+from src.infrastructure.dependencies.app_container import AppContainer  # noqa: F401
 from src.modules.roadmap.use_cases import roadmap_router
 from src.modules.roadmap.use_cases.create_new_node.command import CreateNodeCommand
 from src.modules.roadmap.use_cases.create_new_node.impl import CreateNodeUseCase
@@ -21,6 +21,6 @@ from src.modules.roadmap.use_cases.create_new_node.response_dto import CreateNew
 async def create_new_node(
     roadmap_id: UUID,
     data: CreateNodeCommand,
-    uc: Annotated[CreateNodeUseCase, Depends(Provide[Container.create_node_use_case])],
+    uc: Annotated[CreateNodeUseCase, Depends(Provide["roadmap.create_node_use_case"])],
 ):
     return await uc.invoke(roadmap_id, data)

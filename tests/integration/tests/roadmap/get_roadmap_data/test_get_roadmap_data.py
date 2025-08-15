@@ -2,7 +2,6 @@ from uuid import UUID, uuid4
 
 import pytest
 from fastapi import status
-from fastapi.exceptions import ResponseValidationError
 from httpx import AsyncClient
 
 from src.modules.roadmap.domain.node.node import Node
@@ -87,8 +86,8 @@ class TestGetRoadmapNodesError:
         self,
         client: AsyncClient,
     ) -> None:
-        with pytest.raises(ResponseValidationError):
-            await client.get(f"/roadmap/{uuid4()}/data")
+        r = await client.get(f"/roadmap/{uuid4()}/data")
+        assert r.status_code == status.HTTP_404_NOT_FOUND
 
     async def test_get_nodes_invalid_roadmap_id(
         self,

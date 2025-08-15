@@ -4,7 +4,7 @@ from uuid import UUID
 from dependency_injector.wiring import Provide, inject
 from fastapi import Depends, status
 
-from src.dependencies.container import Container
+from src.infrastructure.dependencies.app_container import AppContainer  # noqa: F401
 from src.modules.roadmap.use_cases import roadmap_router
 from src.modules.roadmap.use_cases.delete_edge.impl import DeleteEdgeUseCase
 
@@ -17,6 +17,6 @@ from src.modules.roadmap.use_cases.delete_edge.impl import DeleteEdgeUseCase
 @inject
 async def delete_edge(
     edge_id: UUID,
-    uc: Annotated[DeleteEdgeUseCase, Depends(Provide[Container.delete_edge_use_case])],
+    uc: Annotated[DeleteEdgeUseCase, Depends(Provide["roadmap.delete_edge_use_case"])],
 ):
     await uc.invoke(edge_id)

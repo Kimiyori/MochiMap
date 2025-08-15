@@ -1,9 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from src.infrastructure.persistence.models.edges.repository import BaseEdgeRepository
-from src.infrastructure.persistence.models.node.repository import BaseNodeRepository
-from src.infrastructure.persistence.models.roadmap.repository import BaseRoadmapRepository
 from src.infrastructure.persistence.unit_of_work import SqlAlchemyUnitOfWork
+from src.modules.roadmap.infrastructure.persistence.edge_repository import BaseEdgeRepository
+from src.modules.roadmap.infrastructure.persistence.node_repository import BaseNodeRepository
+from src.modules.roadmap.infrastructure.persistence.roadmap_repository import BaseRoadmapRepository
 
 
 class RoadmapUnitOfWork(SqlAlchemyUnitOfWork[BaseRoadmapRepository]):

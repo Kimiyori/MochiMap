@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
 from src.core.routes import add_routes
-from src.dependencies.container import Container
+from src.infrastructure.dependencies.app_container import AppContainer
 from src.infrastructure.persistence.mapper import start_mapper
 from src.modules.roadmap.use_cases import roadmap_router
 
@@ -23,7 +23,7 @@ async def lifespan(app: FastAPI):
 
 def create_app() -> FastAPI:
     """Factory for creating a FastAPI client."""
-    container = Container()
+    container = AppContainer()
     app = FastAPI(
         title="MochiMap API",
         version="0.0.1",

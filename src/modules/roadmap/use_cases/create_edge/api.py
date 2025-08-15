@@ -4,7 +4,7 @@ from uuid import UUID
 from dependency_injector.wiring import Provide, inject
 from fastapi import Depends, status
 
-from src.dependencies.container import Container
+from src.infrastructure.dependencies.app_container import AppContainer  # noqa: F401
 from src.modules.roadmap.use_cases import roadmap_router
 from src.modules.roadmap.use_cases.create_edge.command import CreateEdgeCommand, CreateEdgeResponseDTO
 from src.modules.roadmap.use_cases.create_edge.impl import CreateEdgeUseCase
@@ -20,6 +20,6 @@ from src.modules.roadmap.use_cases.create_edge.impl import CreateEdgeUseCase
 async def create_edge(
     roadmap_id: UUID,
     data: CreateEdgeCommand,
-    uc: Annotated[CreateEdgeUseCase, Depends(Provide[Container.create_edge_use_case])],
+    uc: Annotated[CreateEdgeUseCase, Depends(Provide["roadmap.create_edge_use_case"])],
 ):
     return await uc.invoke(roadmap_id, data)

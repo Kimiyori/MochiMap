@@ -3,6 +3,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
+from src.common.errors import NotFoundException
 from src.common.protocols.use_case import BaseUseCase
 from src.infrastructure.persistence.models.roadmap.roadmap import RoadmapModel
 from src.infrastructure.persistence.transaction import async_transactional
@@ -23,4 +24,7 @@ class GetRoadmapDataUseCase(BaseUseCase[RoadmapUnitOfWork]):
             )
         )
         data = await self.uow.session.execute(query)
-        return data.scalar()
+        result = data.scalar()
+        if result is None:
+            raise NotFoundException(f"Roadmap with id {roadmap_id} not found")
+        return result

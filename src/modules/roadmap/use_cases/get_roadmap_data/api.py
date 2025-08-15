@@ -4,7 +4,7 @@ from uuid import UUID
 from dependency_injector.wiring import Provide, inject
 from fastapi import Depends, status
 
-from src.dependencies.container import Container
+from src.infrastructure.dependencies.app_container import AppContainer  # noqa: F401
 from src.modules.roadmap.use_cases import roadmap_router
 from src.modules.roadmap.use_cases.get_roadmap_data.impl import GetRoadmapDataUseCase
 from src.modules.roadmap.use_cases.get_roadmap_data.response_dto import (
@@ -21,6 +21,6 @@ from src.modules.roadmap.use_cases.get_roadmap_data.response_dto import (
 @inject
 async def get_roadmap_data(
     roadmap_id: UUID,
-    uc: Annotated[GetRoadmapDataUseCase, Depends(Provide[Container.get_roadmap_nodes_use_case])],
+    uc: Annotated[GetRoadmapDataUseCase, Depends(Provide["roadmap.get_roadmap_nodes_use_case"])],
 ):
     return await uc.invoke(roadmap_id)
