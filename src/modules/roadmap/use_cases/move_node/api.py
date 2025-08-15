@@ -4,6 +4,8 @@ from uuid import UUID
 from dependency_injector.wiring import Provide, inject
 from fastapi import Depends, status
 
+from src.common.errors import NotFoundException
+from src.common.openapi import error_responses
 from src.infrastructure.dependencies.app_container import AppContainer  # noqa: F401
 from src.modules.roadmap.use_cases import roadmap_router
 from src.modules.roadmap.use_cases.move_node.command import MoveNodeCommand
@@ -14,6 +16,14 @@ from src.modules.roadmap.use_cases.move_node.impl import MoveNodeUseCase
     path="/node/{node_id:uuid}/move",
     name="Move node position",
     status_code=status.HTTP_200_OK,
+    responses=error_responses(NotFoundException),
+    description=(
+        "Move a node to a new position.\n\n"
+        "Status codes:\n"
+        "- 200: Node moved\n"
+        "- 404: Node not found\n"
+        "- 500: Internal Server Error"
+    ),
 )
 @inject
 async def move_node(

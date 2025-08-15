@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
+from src.common.error_handling import register_error_handling
 from src.core.routes import add_routes
 from src.infrastructure.dependencies.app_container import AppContainer
 from src.infrastructure.persistence.mapper import start_mapper
@@ -42,6 +43,9 @@ def create_app() -> FastAPI:
     app.add_middleware(SessionMiddleware, secret_key="some-random-string")  # noqa: S106
 
     add_routes([roadmap_router], app)
+
+    register_error_handling(app)
+
     return app
 
 

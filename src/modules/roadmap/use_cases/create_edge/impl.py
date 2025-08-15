@@ -1,9 +1,8 @@
 from uuid import UUID
 
-from src.common.errors import BadRequestException, ConflictException, NotFoundException
+from src.common.errors import ConflictException, NotFoundException
 from src.common.protocols.use_case import BaseUseCase
 from src.infrastructure.persistence.transaction import async_transactional
-from src.modules.roadmap.domain.edge.errors import SelfLoopEdgeError
 from src.modules.roadmap.infrastructure.uow import RoadmapUnitOfWork
 from src.modules.roadmap.use_cases.create_edge.command import CreateEdgeCommand
 
@@ -25,9 +24,6 @@ class CreateEdgeUseCase(BaseUseCase[RoadmapUnitOfWork]):
         if await self.uow.repository.edge_exists(str(roadmap_id), str(data.source_id), str(data.target_id)):
             raise ConflictException("Edge with the same source and target already exists")
 
-        try:
-            edge = roadmap.create_edge(data.source_id, data.target_id)
-        except SelfLoopEdgeError as e:
-            raise BadRequestException(str(e)) from None
+        edge = roadmap.create_edge(data.source_id, data.target_id)
         self.uow.repository.add(edge)
         return {"id": edge.id}
