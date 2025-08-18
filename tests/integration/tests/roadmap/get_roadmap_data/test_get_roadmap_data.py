@@ -94,5 +94,4 @@ class TestGetRoadmapNodesError:
         client: AsyncClient,
     ) -> None:
         response = await client.get("/roadmap/invalid_uuid/data")
-        # Path param is constrained to UUID, so this route won't match and should 404
         assert response.status_code == status.HTTP_404_NOT_FOUND

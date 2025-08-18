@@ -29,7 +29,7 @@ class TestMoveNodeUseCase:
 
 
 
-class TestUpdateNodeErrorUseCase:
+class TestMoveNodeErrorUseCase:
     async def test_update_non_existent_node_fails(self, faker: Faker, client: AsyncClient) -> None:
         non_existent_node_id = uuid4()
         update_data = {

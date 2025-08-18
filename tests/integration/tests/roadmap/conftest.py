@@ -19,9 +19,11 @@ from src.modules.roadmap.use_cases.create_roadmap.command import CreateRoadmapCo
 def num_roadmaps() -> int:
     return 1
 
+
 @pytest.fixture
 def num_edges() -> int:
     return 1
+
 
 @pytest.fixture
 def generate_node_data_based_on_type(faker: Faker):
@@ -34,15 +36,31 @@ def generate_node_data_based_on_type(faker: Faker):
                 "url": faker.url(),
             }
         return None
+
     return _generate_node_data
 
+
 @pytest.fixture
-def check_if_exists(session, model: Base):
+async def check_if_exists(session: AsyncSession, model: Base):
     async def _check_if_exists() -> bool:
+        await session.flush()
         result = await session.execute(select(model))
-        data = result.scalars().all()
-        return len(data) == 1
-    return _check_if_exists
+        data = result.scalar_one_or_none()
+        assert data is not None
+
+    yield
+    await _check_if_exists()
+
+@pytest.fixture
+async def check_if_not_exists(session: AsyncSession, model: Base):
+    async def _check_if_not_exists() -> bool:
+        await session.flush()
+        result = await session.execute(select(model))
+        data = result.scalar_one_or_none()
+        assert data is None
+
+    yield
+    await _check_if_not_exists()
 
 @pytest.fixture
 def created_roadmaps(session, num_roadmaps: int) -> list[Roadmap]:
@@ -55,6 +73,7 @@ def created_roadmaps(session, num_roadmaps: int) -> list[Roadmap]:
         session.add(roadmap)
         roadmaps.append(roadmap)
     return roadmaps
+
 
 @pytest.fixture
 async def created_nodes(
@@ -79,7 +98,9 @@ async def created_nodes(
         new_node = Node.new_node(roadmap_id=roadmap_id, command=data)
         nodes.append(new_node)
     session.add_all(nodes)
+    await session.flush()
     return roadmap_id, nodes
+
 
 @pytest.fixture
 async def created_edges(
@@ -89,15 +110,14 @@ async def created_edges(
 ) -> list[Edge]:
     roadmap_id, nodes = created_nodes
     edges: list[Edge] = []
+    assert len(nodes) >= 2
+    for i in range(num_edges):
+        edge = Edge.new_edge(
+            roadmap_id=roadmap_id,
+            source_id=nodes[i].id,
+            target_id=nodes[i + 1].id,
+        )
+        edges.append(edge)
+    session.add_all(edges)
     await session.flush()
-    if num_edges > 0 and len(nodes) >= 2:
-        to_create = min(num_edges, max(0, len(nodes) - 1))
-        for i in range(to_create):
-            edge = Edge.new_edge(
-                roadmap_id=roadmap_id,
-                source_id=nodes[i].id,
-                target_id=nodes[i + 1].id,
-            )
-            edges.append(edge)
-        session.add_all(edges)
     return edges

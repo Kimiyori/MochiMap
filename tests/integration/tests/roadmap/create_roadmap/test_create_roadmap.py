@@ -11,9 +11,10 @@ async def make_request(client: AsyncClient, data: dict):
 
 
 @pytest.mark.parametrize("model", [RoadmapModel])
+@pytest.mark.usefixtures("check_if_exists")
 class TestCreateRoadmapUseCase:
     async def test_create_roadmap_with_valid_data_success(
-        self, faker: Faker, client: AsyncClient, check_if_exists
+        self, faker: Faker, client: AsyncClient,
     ) -> None:
         data = {
             "title": faker.sentence(),
@@ -22,23 +23,20 @@ class TestCreateRoadmapUseCase:
         response = await make_request(client, data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert await check_if_exists() is True
 
     async def test_create_roadmap_with_empty_description(
-        self, faker: Faker, client: AsyncClient, check_if_exists
+        self, faker: Faker, client: AsyncClient
     ) -> None:
         data = {"title": faker.sentence(), "description": None}
         response = await make_request(client, data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert await check_if_exists() is True
 
-    async def test_create_roadmap_without_description(self, faker: Faker, client: AsyncClient, check_if_exists) -> None:
+    async def test_create_roadmap_without_description(self, faker: Faker, client: AsyncClient) -> None:
         data = {"title": faker.sentence()}
         response = await make_request(client, data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert await check_if_exists() is True
 
 
 class TestCreateRoadmapErrorUseCase:

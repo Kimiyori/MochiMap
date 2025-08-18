@@ -17,9 +17,9 @@ async def make_request( client: AsyncClient, roadmap_id: UUID, data: dict):
 @pytest.mark.parametrize("model", [NodeModel])
 class TestCreateNewNodeUseCase:
 
-
+    @pytest.mark.usefixtures("check_if_exists")
     async def test_create_learning_note_node_success(
-        self, faker: Faker, client: AsyncClient, created_roadmaps: list[Roadmap], check_if_exists
+        self, faker: Faker, client: AsyncClient, created_roadmaps: list[Roadmap]
     ) -> None:
         roadmap_id = created_roadmaps[0].id
         data = {
@@ -34,10 +34,10 @@ class TestCreateNewNodeUseCase:
         response = await make_request(client, roadmap_id, data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert await check_if_exists()
 
+    @pytest.mark.usefixtures("check_if_exists")
     async def test_create_resource_bookmark_node_success(
-        self, faker: Faker, client: AsyncClient, created_roadmaps: list[Roadmap], check_if_exists
+        self, faker: Faker, client: AsyncClient, created_roadmaps: list[Roadmap]
     ) -> None:
         roadmap_id = created_roadmaps[0].id
         data = {
@@ -51,7 +51,6 @@ class TestCreateNewNodeUseCase:
         response = await make_request(client, roadmap_id, data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert await check_if_exists()
 
 
 class TestCreateNewNodeErrorUseCase:
