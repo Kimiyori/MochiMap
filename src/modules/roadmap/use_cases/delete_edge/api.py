@@ -15,7 +15,6 @@ from src.modules.roadmap.use_cases.delete_edge.impl import DeleteEdgeUseCase
     name="Delete edge",
     status_code=status.HTTP_204_NO_CONTENT,
     responses=error_responses(NotFoundException),
-   
 )
 @inject
 async def delete_edge(

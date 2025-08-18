@@ -53,7 +53,7 @@ async def check_if_exists(session: AsyncSession, model: Base):
 
 
 @pytest.fixture
-def created_roadmaps(session:AsyncSession, num_roadmaps: int) -> list[Roadmap]:
+def created_roadmaps(session: AsyncSession, num_roadmaps: int) -> list[Roadmap]:
     roadmaps: list[Roadmap] = []
     for i in range(num_roadmaps):
         command = CreateRoadmapCommand(
@@ -74,7 +74,7 @@ async def created_nodes(
     session: AsyncSession,
     created_roadmaps: list[Roadmap],
     generate_node_data_based_on_type,
-    random_position:dict[str,float],
+    random_position: dict[str, float],
     num_nodes: int,
 ) -> tuple[UUID, list[Node]]:
     roadmap_id = created_roadmaps[0].id

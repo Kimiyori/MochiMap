@@ -21,7 +21,7 @@ class TestMoveNodeUseCase:
 
 
 class TestMoveNodeErrorUseCase:
-    async def test_move_non_existent_node_fails(self,  client: AsyncClient, random_position: dict[str, float]) -> None:
+    async def test_move_non_existent_node_fails(self, client: AsyncClient, random_position: dict[str, float]) -> None:
         non_existent_node_id = uuid4()
         update_data = {
             "position": random_position,
