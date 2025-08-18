@@ -27,4 +27,4 @@ class RoadmapContainer(containers.DeclarativeContainer):
     move_node_use_case = providers.Factory(MoveNodeUseCase, uow=node_uow)
 
     get_user_roadmaps_use_case = providers.Factory(GetUserRoadmapsUseCase, uow=roadmap_uow)
-    get_roadmap_nodes_use_case = providers.Factory(GetRoadmapDataUseCase, uow=roadmap_uow)
+    get_roadmap_data_use_case = providers.Factory(GetRoadmapDataUseCase, uow=roadmap_uow)

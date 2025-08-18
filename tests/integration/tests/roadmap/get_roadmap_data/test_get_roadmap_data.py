@@ -86,8 +86,8 @@ class TestGetRoadmapNodesError:
         self,
         client: AsyncClient,
     ) -> None:
-        r = await client.get(f"/roadmap/{uuid4()}/data")
-        assert r.status_code == status.HTTP_404_NOT_FOUND
+        response = await client.get(f"/roadmap/{uuid4()}/data")
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
     async def test_get_nodes_invalid_roadmap_id(
         self,

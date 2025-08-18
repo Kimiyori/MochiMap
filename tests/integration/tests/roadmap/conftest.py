@@ -45,25 +45,15 @@ async def check_if_exists(session: AsyncSession, model: Base):
     async def _check_if_exists() -> bool:
         await session.flush()
         result = await session.execute(select(model))
-        data = result.scalar_one_or_none()
-        assert data is not None
+        data = result.scalars().all()
+        assert len(data) == 1
 
     yield
     await _check_if_exists()
 
-@pytest.fixture
-async def check_if_not_exists(session: AsyncSession, model: Base):
-    async def _check_if_not_exists() -> bool:
-        await session.flush()
-        result = await session.execute(select(model))
-        data = result.scalar_one_or_none()
-        assert data is None
-
-    yield
-    await _check_if_not_exists()
 
 @pytest.fixture
-def created_roadmaps(session, num_roadmaps: int) -> list[Roadmap]:
+def created_roadmaps(session:AsyncSession, num_roadmaps: int) -> list[Roadmap]:
     roadmaps: list[Roadmap] = []
     for i in range(num_roadmaps):
         command = CreateRoadmapCommand(
@@ -74,6 +64,9 @@ def created_roadmaps(session, num_roadmaps: int) -> list[Roadmap]:
         roadmaps.append(roadmap)
     return roadmaps
 
+@pytest.fixture
+def random_position(faker: Faker):
+    return {"x": faker.pyfloat(min_value=0, max_value=200), "y": faker.pyfloat(min_value=0, max_value=200)}
 
 @pytest.fixture
 async def created_nodes(
@@ -81,6 +74,7 @@ async def created_nodes(
     session: AsyncSession,
     created_roadmaps: list[Roadmap],
     generate_node_data_based_on_type,
+    random_position:dict[str,float],
     num_nodes: int,
 ) -> tuple[UUID, list[Node]]:
     roadmap_id = created_roadmaps[0].id
@@ -89,10 +83,7 @@ async def created_nodes(
         node_type: NodeType = faker.random_element([NodeType.LEARNING_NOTE, NodeType.RESOURCE_BOOKMARK])
         data = CreateNodeCommand(
             type=node_type,
-            position=PositionDTO(
-                x=faker.random_int(min=0, max=100),
-                y=faker.random_int(min=0, max=100),
-            ),
+            position=PositionDTO(x=random_position["x"], y=random_position["y"]),
             data=generate_node_data_based_on_type(node_type),
         )
         new_node = Node.new_node(roadmap_id=roadmap_id, command=data)

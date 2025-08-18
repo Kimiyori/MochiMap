@@ -2,5 +2,5 @@ from src.infrastructure.persistence.base.base_repository import SqlAlchemyReposi
 from src.modules.roadmap.domain.edge.edge import Edge
 
 
-class BaseEdgeRepository(SqlAlchemyRepository[Edge]):
+class EdgeRepository(SqlAlchemyRepository[Edge]):
     model = Edge

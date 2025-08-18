@@ -6,7 +6,7 @@ from src.modules.roadmap.domain.node.node import Node
 from src.modules.roadmap.domain.roadmap.roadmap import Roadmap
 
 
-class BaseRoadmapRepository(SqlAlchemyRepository[Roadmap]):
+class RoadmapRepository(SqlAlchemyRepository[Roadmap]):
     model = Roadmap
 
     async def nodes_exist_in_roadmap(self, roadmap_id: str, node_ids: list[str]) -> bool:

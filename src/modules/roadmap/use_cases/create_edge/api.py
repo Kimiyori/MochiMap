@@ -17,15 +17,6 @@ from src.modules.roadmap.use_cases.create_edge.impl import CreateEdgeUseCase
     status_code=status.HTTP_201_CREATED,
     response_model=CreateEdgeResponseDTO,
     responses=error_responses([NotFoundException, ConflictException, BadRequestException]),
-    description=(
-        "Create an edge between two nodes that belong to the specified roadmap.\n\n"
-        "Status codes:\n"
-        "- 201: Edge created\n"
-        "- 400: Invalid edge (domain rules)\n"
-        "- 404: Roadmap or nodes not found\n"
-        "- 409: Edge already exists\n"
-        "- 500: Internal Server Error"
-    ),
 )
 @inject
 async def create_edge(

@@ -13,7 +13,7 @@ from src.modules.roadmap.use_cases import roadmap_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    db = app.container.infrastructure.db()
+    db = app.state.container.infrastructure.db()
     await db.connect()
     start_mapper()
 
@@ -32,7 +32,7 @@ def create_app() -> FastAPI:
         redirect_slashes=False,
         lifespan=lifespan,
     )
-    app.container = container
+    app.state.container = container
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],

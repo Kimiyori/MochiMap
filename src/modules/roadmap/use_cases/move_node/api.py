@@ -17,13 +17,6 @@ from src.modules.roadmap.use_cases.move_node.impl import MoveNodeUseCase
     name="Move node position",
     status_code=status.HTTP_200_OK,
     responses=error_responses(NotFoundException),
-    description=(
-        "Move a node to a new position.\n\n"
-        "Status codes:\n"
-        "- 200: Node moved\n"
-        "- 404: Node not found\n"
-        "- 500: Internal Server Error"
-    ),
 )
 @inject
 async def move_node(
