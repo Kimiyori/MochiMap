@@ -1,4 +1,4 @@
-from typing import TypeVar, final
+from typing import ClassVar, TypeVar, final
 
 from sqlalchemy import delete, exists, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -16,7 +16,7 @@ class SqlAlchemyRepository[ModelT: Base]:
 
     """
 
-    model: type[ModelT]
+    model: ClassVar[type[ModelT]]
 
     def __init__(self, session: AsyncSession) -> None:
         self.session = session

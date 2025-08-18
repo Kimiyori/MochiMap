@@ -4,15 +4,16 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
+from src.common.error_handling import register_error_handling
 from src.core.routes import add_routes
-from src.dependencies.container import Container
+from src.infrastructure.dependencies.app_container import AppContainer
 from src.infrastructure.persistence.mapper import start_mapper
 from src.modules.roadmap.use_cases import roadmap_router
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    db = app.container.infrastructure.db()
+    db = app.state.container.infrastructure.db()
     await db.connect()
     start_mapper()
 
@@ -23,7 +24,7 @@ async def lifespan(app: FastAPI):
 
 def create_app() -> FastAPI:
     """Factory for creating a FastAPI client."""
-    container = Container()
+    container = AppContainer()
     app = FastAPI(
         title="MochiMap API",
         version="0.0.1",
@@ -31,7 +32,7 @@ def create_app() -> FastAPI:
         redirect_slashes=False,
         lifespan=lifespan,
     )
-    app.container = container
+    app.state.container = container
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
@@ -42,6 +43,9 @@ def create_app() -> FastAPI:
     app.add_middleware(SessionMiddleware, secret_key="some-random-string")  # noqa: S106
 
     add_routes([roadmap_router], app)
+
+    register_error_handling(app)
+
     return app
 
 

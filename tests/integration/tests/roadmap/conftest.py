@@ -19,9 +19,11 @@ from src.modules.roadmap.use_cases.create_roadmap.command import CreateRoadmapCo
 def num_roadmaps() -> int:
     return 1
 
+
 @pytest.fixture
 def num_edges() -> int:
     return 1
+
 
 @pytest.fixture
 def generate_node_data_based_on_type(faker: Faker):
@@ -34,18 +36,24 @@ def generate_node_data_based_on_type(faker: Faker):
                 "url": faker.url(),
             }
         return None
+
     return _generate_node_data
 
-@pytest.fixture
-def check_if_exists(session, model: Base):
-    async def _check_if_exists() -> bool:
-        result = await session.execute(select(model))
-        data = result.scalars().all()
-        return len(data) == 1
-    return _check_if_exists
 
 @pytest.fixture
-def created_roadmaps(session, num_roadmaps: int) -> list[Roadmap]:
+async def check_if_exists(session: AsyncSession, model: Base):
+    async def _check_if_exists() -> bool:
+        await session.flush()
+        result = await session.execute(select(model))
+        data = result.scalars().all()
+        assert len(data) == 1
+
+    yield
+    await _check_if_exists()
+
+
+@pytest.fixture
+def created_roadmaps(session: AsyncSession, num_roadmaps: int) -> list[Roadmap]:
     roadmaps: list[Roadmap] = []
     for i in range(num_roadmaps):
         command = CreateRoadmapCommand(
@@ -57,11 +65,16 @@ def created_roadmaps(session, num_roadmaps: int) -> list[Roadmap]:
     return roadmaps
 
 @pytest.fixture
+def random_position(faker: Faker):
+    return {"x": faker.pyfloat(min_value=0, max_value=200), "y": faker.pyfloat(min_value=0, max_value=200)}
+
+@pytest.fixture
 async def created_nodes(
     faker: Faker,
     session: AsyncSession,
     created_roadmaps: list[Roadmap],
     generate_node_data_based_on_type,
+    random_position: dict[str, float],
     num_nodes: int,
 ) -> tuple[UUID, list[Node]]:
     roadmap_id = created_roadmaps[0].id
@@ -70,16 +83,15 @@ async def created_nodes(
         node_type: NodeType = faker.random_element([NodeType.LEARNING_NOTE, NodeType.RESOURCE_BOOKMARK])
         data = CreateNodeCommand(
             type=node_type,
-            position=PositionDTO(
-                x=faker.random_int(min=0, max=100),
-                y=faker.random_int(min=0, max=100),
-            ),
+            position=PositionDTO(x=random_position["x"], y=random_position["y"]),
             data=generate_node_data_based_on_type(node_type),
         )
         new_node = Node.new_node(roadmap_id=roadmap_id, command=data)
         nodes.append(new_node)
     session.add_all(nodes)
+    await session.flush()
     return roadmap_id, nodes
+
 
 @pytest.fixture
 async def created_edges(
@@ -89,15 +101,14 @@ async def created_edges(
 ) -> list[Edge]:
     roadmap_id, nodes = created_nodes
     edges: list[Edge] = []
+    assert len(nodes) >= 2
+    for i in range(num_edges):
+        edge = Edge.new_edge(
+            roadmap_id=roadmap_id,
+            source_id=nodes[i].id,
+            target_id=nodes[i + 1].id,
+        )
+        edges.append(edge)
+    session.add_all(edges)
     await session.flush()
-    if num_edges > 0 and len(nodes) >= 2:
-        to_create = min(num_edges, max(0, len(nodes) - 1))
-        for i in range(to_create):
-            edge = Edge.new_edge(
-                roadmap_id=roadmap_id,
-                source_id=nodes[i].id,
-                target_id=nodes[i + 1].id,
-            )
-            edges.append(edge)
-        session.add_all(edges)
     return edges

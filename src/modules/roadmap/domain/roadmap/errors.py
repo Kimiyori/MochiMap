@@ -1,7 +1,9 @@
 from typing import ClassVar
 
+from src.common.domain_errors import BaseDomainError
 
-class RoadmapValidationError(ValueError):
+
+class RoadmapValidationError(BaseDomainError):
     ERROR_MAP: ClassVar[dict[str, str]] = {"title": "Title must not be empty."}
 
     def __init__(self, keys: list[str]):

@@ -13,11 +13,11 @@ from src.modules.roadmap.use_cases.create_edge.command import CreateEdgeCommand
 
 class TestCreateEdge:
     async def make_request(self, client: AsyncClient, roadmap_id: UUID, data: CreateEdgeCommand):
-        # Ensure we send a proper JSON-serializable dict, not a pre-serialized JSON string
         return await client.post(f"/roadmap/{roadmap_id}/edge", json=data.model_dump(mode="json"))
 
     @pytest.mark.parametrize("model", [EdgeModel])
-    async def test_create_edge_success(self, client: AsyncClient, created_nodes, check_if_exists):
+    @pytest.mark.usefixtures("check_if_exists")
+    async def test_create_edge_success(self, client: AsyncClient, created_nodes):
         roadmap_id, nodes = created_nodes
 
         r = await self.make_request(
@@ -26,7 +26,6 @@ class TestCreateEdge:
             CreateEdgeCommand(source_id=str(nodes[0].id), target_id=str(nodes[1].id), type=EdgeType.BEZIER),
         )
         assert r.status_code == status.HTTP_201_CREATED
-        assert await check_if_exists()
 
     async def test_create_edge_duplicate_same_pair_conflict(self, client: AsyncClient, created_nodes):
         roadmap_id, nodes = created_nodes
@@ -86,7 +85,7 @@ class TestCreateEdge:
             CreateEdgeCommand(source_id=str(nodes[0].id), target_id=str(nodes[1].id), type=EdgeType.BEZIER),
         )
         assert response.status_code == status.HTTP_201_CREATED
-        edge_id: UUID = UUID(response.json()["id"])  # type: ignore[arg-type]
+        edge_id: UUID = UUID(response.json()["id"])
 
         result = await session.execute(select(EdgeModel).where(EdgeModel.id == edge_id))
         edge: EdgeModel | None = result.scalar_one_or_none()

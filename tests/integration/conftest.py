@@ -30,8 +30,8 @@ def event_loop():
 @pytest.fixture(scope="session", autouse=True)
 async def db_override():
     set_test_env()
-    app.container.infrastructure.db.override(Singleton(AsyncDatabase, get_db_uri()))
-    db = app.container.infrastructure.db()
+    app.state.container.infrastructure.db.override(Singleton(AsyncDatabase, get_db_uri()))
+    db = app.state.container.infrastructure.db()
     await db.connect()
     start_mapper()
     try:

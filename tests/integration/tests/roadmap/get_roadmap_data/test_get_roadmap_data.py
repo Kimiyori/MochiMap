@@ -2,7 +2,6 @@ from uuid import UUID, uuid4
 
 import pytest
 from fastapi import status
-from fastapi.exceptions import ResponseValidationError
 from httpx import AsyncClient
 
 from src.modules.roadmap.domain.node.node import Node
@@ -87,13 +86,12 @@ class TestGetRoadmapNodesError:
         self,
         client: AsyncClient,
     ) -> None:
-        with pytest.raises(ResponseValidationError):
-            await client.get(f"/roadmap/{uuid4()}/data")
+        response = await client.get(f"/roadmap/{uuid4()}/data")
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
     async def test_get_nodes_invalid_roadmap_id(
         self,
         client: AsyncClient,
     ) -> None:
         response = await client.get("/roadmap/invalid_uuid/data")
-        # Path param is constrained to UUID, so this route won't match and should 404
         assert response.status_code == status.HTTP_404_NOT_FOUND

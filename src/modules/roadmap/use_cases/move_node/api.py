@@ -4,7 +4,9 @@ from uuid import UUID
 from dependency_injector.wiring import Provide, inject
 from fastapi import Depends, status
 
-from src.dependencies.container import Container
+from src.common.errors import NotFoundException
+from src.common.openapi import error_responses
+from src.infrastructure.dependencies.app_container import AppContainer  # noqa: F401
 from src.modules.roadmap.use_cases import roadmap_router
 from src.modules.roadmap.use_cases.move_node.command import MoveNodeCommand
 from src.modules.roadmap.use_cases.move_node.impl import MoveNodeUseCase
@@ -14,11 +16,12 @@ from src.modules.roadmap.use_cases.move_node.impl import MoveNodeUseCase
     path="/node/{node_id:uuid}/move",
     name="Move node position",
     status_code=status.HTTP_200_OK,
+    responses=error_responses(NotFoundException),
 )
 @inject
 async def move_node(
     node_id: UUID,
     data: MoveNodeCommand,
-    uc: Annotated[MoveNodeUseCase, Depends(Provide[Container.move_node_use_case])],
+    uc: Annotated[MoveNodeUseCase, Depends(Provide["roadmap.move_node_use_case"])],
 ):
     await uc.invoke(node_id, data)
