@@ -9,12 +9,6 @@ ModelT = TypeVar("ModelT", bound=Base)
 
 
 class SqlAlchemyRepository[ModelT: Base]:
-    """SqlAlchemy Repository.
-
-    Args:
-        Generic (_type_): Type of table that you'll be using.1
-
-    """
 
     model: ClassVar[type[ModelT]]
 

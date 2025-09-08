@@ -9,6 +9,7 @@ from src.infrastructure.persistence.models.base_model import Base, UUIDMixin
 from src.modules.roadmap.domain.node.value_objects import NodeType
 
 if TYPE_CHECKING:
+    from src.infrastructure.persistence.models.edges.edges import EdgeModel
     from src.infrastructure.persistence.models.roadmap.roadmap import RoadmapModel
 
 
@@ -40,3 +41,15 @@ class NodeModel(Base, UUIDMixin):
 
     # Relationships
     roadmap: Mapped["RoadmapModel"] = relationship(back_populates="nodes")
+    outgoing_edges: Mapped[list["EdgeModel"]] = relationship(
+        "EdgeModel",
+        foreign_keys="[EdgeModel.source_id]",
+        back_populates="source",
+        cascade="all, delete-orphan",
+    )
+    incoming_edges: Mapped[list["EdgeModel"]] = relationship(
+        "EdgeModel",
+        foreign_keys="[EdgeModel.target_id]",
+        back_populates="target",
+        cascade="all, delete-orphan",
+    )

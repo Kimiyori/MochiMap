@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
 from src.common.error_handling import register_error_handling
+from src.common.memory_monitor import MemoryMonitor
 from src.core.routes import add_routes
 from src.infrastructure.dependencies.app_container import AppContainer
 from src.infrastructure.persistence.mapper import start_mapper
@@ -13,6 +14,7 @@ from src.modules.roadmap.use_cases import roadmap_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    app.state.memory_monitor.start()
     db = app.state.container.infrastructure.db()
     await db.connect()
     start_mapper()
@@ -20,6 +22,7 @@ async def lifespan(app: FastAPI):
     yield
 
     await db.disconnect()
+    await app.state.memory_monitor.stop()
 
 
 def create_app() -> FastAPI:
@@ -33,6 +36,10 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
     app.state.container = container
+    app.state.memory_monitor = MemoryMonitor(
+        threshold_percent=30,
+        check_interval_seconds=60,
+    )
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],

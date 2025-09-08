@@ -8,6 +8,7 @@ from src.infrastructure.persistence.models.base_model import Base, UUIDMixin
 from src.modules.roadmap.domain.edge.value_objects import EdgeType
 
 if TYPE_CHECKING:
+    from src.infrastructure.persistence.models.node.node import NodeModel
     from src.infrastructure.persistence.models.roadmap.roadmap import RoadmapModel
 
 SQL_EDGE_TYPE = Enum(EdgeType, name="edge_type")
@@ -21,3 +22,13 @@ class EdgeModel(Base, UUIDMixin):
     target_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("nodes.id"), nullable=False)
 
     roadmap: Mapped["RoadmapModel"] = relationship(back_populates="edges")
+    source: Mapped["NodeModel"] = relationship(
+        "NodeModel",
+        foreign_keys=[source_id],
+        back_populates="outgoing_edges",
+    )
+    target: Mapped["NodeModel"] = relationship(
+        "NodeModel",
+        foreign_keys=[target_id],
+        back_populates="incoming_edges",
+    )
